@@ -5,19 +5,19 @@ namespace StarTrekWebAPI.Models;
 
 public partial class Spacecraft
 {
-    public string? Uid { get; set; } = null;
+    public string Uid { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
-    public string Registry { get; set; } = null!;
+    public string? Registry { get; set; }
 
-    public string Status { get; set; } = null!;
+    public string? Status { get; set; }
 
-    public string DateStatus { get; set; } = null!;
+    public string? DateStatus { get; set; }
 
-    public DateTime? SystemDate { get; set; } = null;
+    public DateTime SystemDate { get; set; }
 
-    public DateTime? LastChange { get; set; } = null;
+    public DateTime? LastChange { get; set; }
 
-    public bool? Deleted { get; set; } = null;
+    public bool Deleted { get; set; }
 }

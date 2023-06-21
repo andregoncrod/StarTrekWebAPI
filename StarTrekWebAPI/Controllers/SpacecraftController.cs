@@ -18,13 +18,13 @@ namespace StarTrekWebAPI.Controllers
         [HttpGet]
         public IEnumerable<Spacecraft> GetAll()
         {
-            return _dbContext.Spacecrafts.Where(s => !s.Deleted.Value).ToList();
+            return _dbContext.Spacecrafts.Where(s => !s.Deleted).ToList();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Spacecraft> GetSingle(string id)
         {
-            var foundSpacecraft = _dbContext.Spacecrafts?.FirstOrDefault(s => s.Uid == id && !s.Deleted.Value);
+            var foundSpacecraft = _dbContext.Spacecrafts?.FirstOrDefault(s => s.Uid == id && !s.Deleted);
             return foundSpacecraft == null ? NotFound() : foundSpacecraft;
         }
 
@@ -32,16 +32,16 @@ namespace StarTrekWebAPI.Controllers
         public SpacecraftsPagedDto GetPaged(int pageNumber, int pageSize, string orderColumn, string orderDir, string? searchValue = null)
         {
             IQueryable<Spacecraft> result = null;
-            var total = _dbContext.Spacecrafts.Where(s => !s.Deleted.Value).Count();
+            var total = _dbContext.Spacecrafts.Where(s => !s.Deleted).Count();
             if (!string.IsNullOrWhiteSpace(searchValue))
             {
                 var search = searchValue.Trim().ToLower();
-                result = _dbContext.Spacecrafts.OrderBy($"{orderColumn} {orderDir}").Where(s => !s.Deleted.Value).Where(
-                    s => s.Name.ToLower().Contains(search) || s.Registry.ToLower().Contains(search) || s.Status.ToLower().Contains(search) || s.DateStatus.ToLower().Contains(search));
+                result = _dbContext.Spacecrafts.Where(s => !s.Deleted).Where(
+                    s => s.Name.ToLower().Contains(search) || s.Registry.ToLower().Contains(search) || s.Status.ToLower().Contains(search) || s.DateStatus.ToLower().Contains(search)).OrderBy($"{orderColumn} {orderDir}");
             }
             else
             {
-                result = _dbContext.Spacecrafts.OrderBy($"{orderColumn} {orderDir}").Where(s => !s.Deleted.Value);
+                result = _dbContext.Spacecrafts.Where(s => !s.Deleted).OrderBy($"{orderColumn} {orderDir}");
             }
 
             return new SpacecraftsPagedDto()
@@ -53,7 +53,7 @@ namespace StarTrekWebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<bool> Post([FromBody] Spacecraft spacecraft)
+        public ActionResult<bool> Post([FromBody] SpacecraftDto spacecraft)
         {
             try
             {
@@ -80,11 +80,11 @@ namespace StarTrekWebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(string id, Spacecraft spacecraft)
+        public ActionResult<bool> Put(string id, SpacecraftDto spacecraft)
         {
             try
             {
-                var spacecraftToUpdate = _dbContext.Spacecrafts.FirstOrDefault(s => s.Uid == id && !s.Deleted.Value);
+                var spacecraftToUpdate = _dbContext.Spacecrafts.FirstOrDefault(s => s.Uid == id && !s.Deleted);
                 if (spacecraftToUpdate == null)
                     return NotFound();
                 spacecraftToUpdate.Name = spacecraft.Name;
@@ -105,7 +105,7 @@ namespace StarTrekWebAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult<bool> Delete(string id)
         {
-            var spacecraftToDelete = _dbContext.Spacecrafts.FirstOrDefault(s => s.Uid == id && !s.Deleted.Value);
+            var spacecraftToDelete = _dbContext.Spacecrafts.FirstOrDefault(s => s.Uid == id && !s.Deleted);
             if (spacecraftToDelete == null)
                 return NotFound();
 
